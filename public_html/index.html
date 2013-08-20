@@ -15,7 +15,10 @@
          var operators={"916":"МТС", "903":"Билайн", "926":"Мегафон"};
          var operator="";
          
-         function key(e) {return e?e.which:event.keyCode;}
+         function key(){ 
+            e = event || window.event;
+            return e.keyCode;
+         }
          function addPhoneChar(keycode) {
              var phonel=phone.length;
              if (phonel<phonenumbercount) {phone=phone+String.fromCharCode(keycode);}
@@ -60,10 +63,15 @@
          function outPhone(){
              var phonemasked=mask;
              
-             for(var i in phone){
+/*             for(var i in phone){
+                 phonemasked=phonemasked.replace(maskchar,phone[i]);
+                 alert(phonemasked.replace(maskchar,phone[i]));
+             }
+*/             for (var i = 0, len = phone.length; i < len; i++) {
                  phonemasked=phonemasked.replace(maskchar,phone[i]);
              }
              document.getElementById("phoneout").innerText=phonemasked;
+             
              outOperator();
              checkPhone();
          }
