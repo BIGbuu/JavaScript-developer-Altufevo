@@ -50,7 +50,6 @@
             var code=phone.substr(0,3);
             var response="Не найден оператор";
             operator="";
-            //response=operator[][eval("c"+code)];
             if (operators[eval(code)]) {operator=operators[eval(code)];response=operator;}
             document.getElementById("operator").innerText=response;
          }
@@ -64,7 +63,7 @@
              var phonemasked=mask;
              
              for (var i=0, phonel=phone.length; i<phonel; i++) {
-                 phonemasked=phonemasked.replace(maskchar,phone[i]);
+                 phonemasked=phonemasked.replace(maskchar,phone.charat(i));
              }
              document.getElementById("phoneout").innerText=phonemasked;
              
