@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style type="text/css" media="all">@import "style.css"; </style>
+        <script>
+         var mask ='+7 (XXX) XXX-XX-XX';   
+         var mask1='+7 (XXX) XXX-XX-XX';   
+         var mask2='+8 XXX XXX XXXX';
+         var maskchar='X';
+         var phone=""; //var phone="9688917764";
+         var phonenumbercount=10;
+         var operators={"916":"МТС", "903":"Билайн", "926":"Мегафон"};
+         var operator="";
+         
+         function key(e) {return e?e.which:event.keyCode;}
+         function addPhoneChar(keycode) {
+             var phonel=phone.length;
+             if (phonel<phonenumbercount) {phone=phone+String.fromCharCode(keycode);}
+             outPhone();
+         }
+         function removePhoneChar(){
+             var phonel=phone.length;
+             if (phonel>0) {phone=phone.substr(0,phonel-1);}
+             outPhone();
+         }
+         function inputPhone(keycode){
+             switch(keycode){
+                 case 8: case 46:   removePhoneChar(); return false; break;
+                 case 48: case 96:  addPhoneChar(48); break; //0
+                 case 49: case 97:  addPhoneChar(49); break; //1
+                 case 50: case 98:  addPhoneChar(50); break; //2
+                 case 51: case 99:  addPhoneChar(51); break; //3
+                 case 52: case 100: addPhoneChar(52); break; //4
+                 case 53: case 101: addPhoneChar(53); break; //5
+                 case 54: case 102: addPhoneChar(54); break; //6
+                 case 55: case 103: addPhoneChar(55); break; //7
+                 case 56: case 104: addPhoneChar(56); break; //8
+                 case 57: case 105: addPhoneChar(57); break; //9
+             }
+             return false;
+         }
+         
+         function outOperator(){
+            var code=phone.substr(0,3);
+            var response="Не найден оператор";
+            operator="";
+            //response=operator[][eval("c"+code)];
+            if (operators[eval(code)]) {operator=operators[eval(code)];response=operator;}
+            document.getElementById("operator").innerText=response;
+         }
+         function checkPhone(){
+             var visibility="hidden";
+             if ((!!operator)&&(phone.length===phonenumbercount)) { visibility="visible";}
+             else {visibility="hidden";}
+             document.getElementById("ok").style.visibility=visibility;
+         }
+         function outPhone(){
+             var phonemasked=mask;
+             
+             for(var i in phone){
+                 phonemasked=phonemasked.replace(maskchar,phone[i]);
+             }
+             document.getElementById("phoneout").innerText=phonemasked;
+             outOperator();
+             checkPhone();
+         }
+        </script>
+          
+    </head>
+    <body
+        onload="outPhone()"
+        onkeydown ="inputPhone(key());if (key()===8) {return false;}"
+        onkeypress=""
+        onkeyup="" 
+    >
+        <div id="content">
+            <div id="phoneinputcase">
+                <div>Введите номер:<div id="phoneout"></div></div>
+            </div>
+            <div id="operatorcase">Оператор: <span id="operator"></span></div>
+            <div id="okcase"><span id="ok">OK</span></div>
+            <div id="keyboard">
+            <table border="1">
+                <tr>
+                    <td class="keyboard_cell"><span class="keyboard_button" onclick="addPhoneChar(49)">1</span></td>
+                    <td class="keyboard_cell"><span class="keyboard_button" onclick="addPhoneChar(50)">2</span></td>
+                    <td class="keyboard_cell"><span class="keyboard_button" onclick="addPhoneChar(51)">3</span></td>
+                </tr>
+                <tr>
+                    <td class="keyboard_cell"><span class="keyboard_button" onclick="addPhoneChar(52)">4</span></td>
+                    <td class="keyboard_cell"><span class="keyboard_button" onclick="addPhoneChar(53)">5</span></td>
+                    <td class="keyboard_cell"><span class="keyboard_button" onclick="addPhoneChar(54)">6</span></td>
+                </tr>
+                <tr>
+                    <td class="keyboard_cell"><span class="keyboard_button" onclick="addPhoneChar(55)">7</span></td>
+                    <td class="keyboard_cell"><span class="keyboard_button" onclick="addPhoneChar(56)">8</span></td>
+                    <td class="keyboard_cell"><span class="keyboard_button" onclick="addPhoneChar(57)">9</span></td>
+                </tr>
+                <tr>
+                    <td class="keyboard_cell"><span class="keyboard_button">&nbsp;</span></td>
+                    <td class="keyboard_cell"><span class="keyboard_button" onclick="addPhoneChar(48)">0</span></td>
+                    <td class="keyboard_cell"><span class="keyboard_button" onclick="removePhoneChar()">&LeftArrow;</span></td>
+                </tr>
+            </table>
+            </div>
+        </div>
+    </body>
+</html>
