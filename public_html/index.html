@@ -63,11 +63,7 @@
          function outPhone(){
              var phonemasked=mask;
              
-/*             for(var i in phone){
-                 phonemasked=phonemasked.replace(maskchar,phone[i]);
-                 alert(phonemasked.replace(maskchar,phone[i]));
-             }
-*/             for (var i=0, phonel=phone.length; i<phonel; i++) {
+             for (var i=0, phonel=phone.length; i<phonel; i++) {
                  phonemasked=phonemasked.replace(maskchar,phone[i]);
              }
              document.getElementById("phoneout").innerText=phonemasked;
