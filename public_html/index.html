@@ -67,7 +67,7 @@
                  phonemasked=phonemasked.replace(maskchar,phone[i]);
                  alert(phonemasked.replace(maskchar,phone[i]));
              }
-*/             for (var i = 0, len = phone.length; i < len; i++) {
+*/             for (var i=0, phonel=phone.length; i<phonel; i++) {
                  phonemasked=phonemasked.replace(maskchar,phone[i]);
              }
              document.getElementById("phoneout").innerText=phonemasked;
