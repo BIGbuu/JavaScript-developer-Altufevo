@@ -14,20 +14,6 @@
          }
          var phoneinput;
          
-         if ( document.addEventListener ) { document.addEventListener( "DOMContentLoaded", function(){ 
-          
-                 phoneinput=Phone("+7 (XXX) XXX-XX-XX", "X", 10, 3, "phoneinput", "operator", "ok" );
-                 phoneinput.inputNode.addEventListener( "change"  , function(){ phoneinput.outPhone()} );
-                 phoneinput.inputNode.addEventListener( "keydown" , function(){ phoneinput.inputPhone(key()); return false; } );
-                 phoneinput.inputNode.addEventListener( "keypress", function(){  } );
-                 phoneinput.inputNode.addEventListener( "keyup"   , function(){
-                    switch(key()){
-                        case 8:  phoneinput.backspacePhoneChar(); break;
-                        case 46: phoneinput.deletePhoneChar();    break;
-                        }          
-                 });                 
-         }, false );}
-         else {
              window.onload = function() {
                  phoneinput=Phone("+7 (XXX) XXX-XX-XX", "X", 10, 3, "phoneinput", "operator", "ok" );
                  phoneinput.inputNode.onchange  = function(){ phoneinput.outPhone()};
@@ -38,10 +24,11 @@
                         case 8:  phoneinput.backspacePhoneChar(); break;
                         case 46: phoneinput.deletePhoneChar();    break;
                         }          
-                 };                 
-                 
+                 };
+                 phoneinput.inputNode.onclick   = function(){ phoneinput.getCaretPosition() };
+                 phoneinput.outPhone();
              }
-         }
+         
 
         
          
@@ -58,7 +45,6 @@
                         <option value="+8 XXX XXX XXXX">+8 XXX XXX XXXX</option>
                     </select>
                     <input type="text" name="phoneinput" id="phoneinput">
-                    <div id="phoneout"></div>
                    
                 </div>
             </div>

@@ -8,8 +8,10 @@ var Phone = NewClass( {
     "phoneCodeNumberCount":3,
     "operators":{"916":"МТС", "903":"Билайн", "926":"Мегафон"},
     "operator":"",
+    "response":"Не найден оператор",
     "inputNode":"",
     "operatorNode":"",
+    "caretPos":0,
     "okNode":""
     
 }, function( mask, maskChar, phoneNumberCount, phoneCodeNumberCount, inputId, operatorId, okId ){ /*constructor*/
@@ -22,6 +24,7 @@ var Phone = NewClass( {
     this.okNode = document.getElementById(okId);
 
     this.inputNode.focus();
+    this.caretPos = this.getNextCaretPosition()-1;
     
 },{/*metods*/
     "getPhone":       function(){
@@ -34,13 +37,27 @@ var Phone = NewClass( {
         return this.code;
     },
     "setMask":        function(mask){
+        var posp = this.getPhoneCaretPosition();
         this.mask = mask;
+
+        var    count = 0;
+        var    pos = this.mask.indexOf(this.maskChar);
+            while ( count < posp ) {
+               count++;
+               pos = (this.mask.indexOf(this.maskChar,pos)<(this.mask.length-1))?this.mask.indexOf(this.maskChar,pos+1):pos+1;
+            }
+        this.caretPos=pos;
+        
         this.outPhone();
     },
     "outOperator":    function(){
-        this.code=this.phone.substr(0,this.phoneCodeNumberCount);
-        var response="Не найден оператор";
-        if (this.operators[eval(this.code)]) {this.operator=this.operators[eval(this.code)];response=this.operator;}
+        var response="";
+            if (this.phone.length>=this.phoneCodeNumberCount) {
+                this.code=this.phone.substr(0,this.phoneCodeNumberCount);
+                response=this.response;
+                if (this.operators[eval(this.code)]) {this.operator=this.operators[eval(this.code)];response=this.operator;}
+                this.operatorNode.innerText=response;
+        }
         this.operatorNode.innerText=response;
     },
     "checkPhone":     function(){
@@ -50,23 +67,14 @@ var Phone = NewClass( {
         this.okNode.style.visibility=visibility;
     },
     "outPhone":       function(){
-        var caretPos = this.getCaretPosition();
          this.phoneMasked=this.mask;
              
          for (var i=0, phonel=this.phone.length; i<phonel; i++) {
              this.phoneMasked=this.phoneMasked.replace(this.maskChar,this.phone.charAt(i));
          }
          this.inputNode.value=this.phoneMasked;
-         document.getElementById("phoneout").innerText=this.phone;
-
         
-       var sel = document.selection.createRange ();
-       sel.moveStart ('character', -this.inputNode.value.length);
-       sel.moveStart ('character', 5);
-       sel.moveEnd ('character', 0);
-       sel.select ();
-        
-//         this.setCaretPosition(caretPos);
+         this.setCaretPosition(this.caretPos);
          this.outOperator();
          this.checkPhone();
     },
@@ -81,14 +89,19 @@ var Phone = NewClass( {
          
     },
     "addPhoneChar":    function(keycode){
-             if (this.phone.length<this.phoneNumberCount) {this.phone=this.phone+String.fromCharCode(keycode);}
-             this.outPhone();
+        if (this.phone.length<this.phoneNumberCount) {
+            this.phone=this.phone.substr(0,this.getPhoneCaretPosition())+String.fromCharCode(keycode)+this.phone.substr(this.getPhoneCaretPosition(),this.phone.length);
+            this.caretPos = this.getNextCaretPosition();
+        }
+        this.outPhone();
+             
     },
     "backspacePhoneChar": function (){
         var phoneCaretPos = this.getPhoneCaretPosition();
         this.phone = ( this.phone.substr(0,(phoneCaretPos-1)) ) +
                      ( this.phone.substr((phoneCaretPos),this.phone.length) )
-
+        var prevCaretPos = (this.mask.substr(0,this.caretPos)).lastIndexOf(this.maskChar);
+        this.caretPos = (phoneCaretPos>0)?prevCaretPos:this.caretPos;
         this.outPhone();
     },
     "deletePhoneChar": function (){
@@ -127,10 +140,22 @@ var Phone = NewClass( {
      }
      else if (this.inputNode.selectionStart || this.inputNode.selectionStart == '0')
        caretPos = this.inputNode.selectionStart;
-     return caretPos;
+       this.caretPos = caretPos;
+     return this.caretPos;
+   },
+   "getNextCaretPosition": function() {
+            var posp = (this.getPhoneCaretPosition()+1);
+
+            count = 0;
+            pos = this.mask.indexOf(this.maskChar);
+            while ( count < posp ) {
+               count++;
+               pos = (this.mask.indexOf(this.maskChar,pos)<(this.mask.length-1))?this.mask.indexOf(this.maskChar,pos+1):pos+1;
+            }
+        return pos;
    },
    "getPhoneCaretPosition": function() {
-       var caretPos = this.getCaretPosition();
+       var caretPos = this.caretPos;
        var str = this.phoneMasked.substr(0,caretPos);
        var strsub = (str.indexOf(this.maskChar)>=0)?str.substr(0,str.indexOf(this.maskChar)):str;
        var strm = this.mask.substr(0,strsub.length);
@@ -138,22 +163,19 @@ var Phone = NewClass( {
        return caretPhonePos;
    },
    "setCaretPosition": function(caretPos) {
-     if (document.selection) { 
-       this.inputNode.focus ();
-       var sel = document.selection.createRange ();
-       sel.moveStart ('character', -this.inputNode.value.length);
-       sel.moveStart ('character', caretPos);
-       sel.moveEnd ('character', caretPos);
-       sel.select ();
-     }
-     else if (this.inputNode.selectionStart || this.inputNode.selectionStart == '0') {
-       this.inputNode.selectionStart = caretPos;
-       this.inputNode.selectionEnd = caretPos;
-       this.inputNode.focus ();
-     }
-   }
+        if(this.inputNode.setSelectionRange){
+            this.inputNode.focus();
+            this.inputNode.setSelectionRange(caretPos,caretPos);
+        }
+        else if (this.inputNode.createTextRange) {
+            var range = this.inputNode.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', caretPos);
+            range.moveStart('character', caretPos);
+            range.select();
+        }
              
-    
+    }
 });
 
 
